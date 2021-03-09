@@ -20,13 +20,19 @@ interface Card{
 
 }
 
+interface cardData{
+  cards : Array<Card>
+}
+
 export default{
   components:{
     TodoCard
   },
-  data(){
+  data():cardData{
     var storage = window.localStorage;
-    var cards : Array<Card> | null = JSON.parse(storage.getItem("cards"));
+    let toParse : string | null = storage.getItem("cards");
+    let treated : string= (toParse === null)?"":toParse;
+    var cards : Array<Card> | null = JSON.parse(treated);
     if (cards === null) 
       cards = [];
     return {
@@ -51,7 +57,7 @@ export default{
     removeCard(idTodo : number): void{
       this.cards.splice(
         this.cards.indexOf(
-          this.cards.find(elem => elem.id === idTodo )
+          this.getCardById(idTodo)
         ), 1
       );
       this.modifyCards();
@@ -61,25 +67,30 @@ export default{
       localStorage.setItem("cards",JSON.stringify(this.cards));
     },
     changeTitle(idTodo : number,title :string): void{
-      let card : Card = this.cards.find(elem => elem.id === idTodo );
+      let card : Card = this.getCardById(idTodo);
       card.title = title;
 
       this.changeCard(idTodo)
     }
     ,
     changeDescription(idTodo: number,description: string): void{
-      let card : Card = this.cards.find(elem => elem.id === idTodo );
+      let card : Card = this.getCardById(idTodo);
       card.description = description;
 
       this.changeCard(idTodo)
     },
 
     changeCard(idTodo: number): void{
-      let card : Card = this.cards.find(elem => elem.id === idTodo );
+      let card : Card = this.getCardById(idTodo);
       card.date = new Date().toString();
 
-      this.modifyCards(idTodo);
+      this.modifyCards();
 
+    },
+
+    getCardById(idTodo : number): Card {
+      let card : Card = this.cards.find((elem:Card) => elem.id === idTodo );
+      return card;
     }
   }
 }
