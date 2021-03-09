@@ -2,15 +2,47 @@
   <div>
     <v-btn @click ="addCard">Add</v-btn>
     <hr/>
-    <todo-card v-for="card in cards" :key="card.id" v-bind:idTodo="card.idTodo"
-    v-bind:title.sync="card.title" v-bind:description.sync="card.description" 
-    v-bind:date.sync="card.date" v-on:removeCard="removeCard" 
-    v-on:changeDesc="changeDescription(card.id, $event)" v-on:changeTitle="changeTitle(card.id,$event)"/>
+    <div v-for="card in cards" :key="card.id">
+        <div :idTodo=card.id>
+        
+        <v-row>
+            <v-col
+                cols="12"
+                sm="6"
+                md="4"
+            >
+                <v-text-field label="Title" v-model="card.title" 
+                v-on:change ="changeTitle(card.id,card.title)"></v-text-field>
+
+                <p>{{card.date}}</p>
+            </v-col> 
+
+            <v-col
+                col = "12"
+                sm = "6"
+                md = "4"
+            >
+                <v-textarea label="Description" outlined v-model="card.description" 
+                v-on:change ="changeDescription(card.id,card.description)"></v-textarea>
+            </v-col>
+
+            <v-col
+                col = "12"
+                sm = "6"
+                md = "2"
+            >
+                <v-btn style="background-color: rgb(212, 60, 0); border-color: rgb(212, 60, 0);" 
+                v-on:click="removeCard(idTodo)">Supprimer</v-btn>
+
+            </v-col>
+
+        </v-row>
+    </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import TodoCard from '../components/TodoCard.vue';
 
 interface Card{
   id:number,
@@ -26,7 +58,6 @@ interface cardData{
 
 export default{
   components:{
-    TodoCard
   },
   data():cardData{
     var storage = window.localStorage;
