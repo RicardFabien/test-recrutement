@@ -32,7 +32,7 @@
                 md = "2"
             >
                 <v-btn style="background-color: rgb(212, 60, 0); border-color: rgb(212, 60, 0);" 
-                v-on:click="removeCard(idTodo)">Supprimer</v-btn>
+                v-on:click="removeCard(card.id)">Supprimer</v-btn>
 
             </v-col>
 
@@ -43,6 +43,7 @@
 </template>
 
 <script lang="ts">
+import Vue from "vue";
 
 interface Card{
   id:number,
@@ -56,10 +57,12 @@ interface cardData{
   cards : Array<Card>
 }
 
-export default{
+var data:cardData;
+
+export default Vue.extend({
   components:{
   },
-  data():cardData{
+  data() {
     var storage = window.localStorage;
     let toParse : string | null = storage.getItem("cards");
     let treated : string= (toParse === null)?"":toParse;
@@ -86,43 +89,54 @@ export default{
     },
 
     removeCard(idTodo : number): void{
-      this.cards.splice(
-        this.cards.indexOf(
-          this.getCardById(idTodo)
-        ), 1
-      );
-      this.modifyCards();
+      let card:Card|undefined = this.getCardById(idTodo);
+
+      if (card !== undefined){
+        this.cards.splice(
+          this.cards.indexOf(
+            card
+          ), 1
+        );
+        this.modifyCards();
+      }
+        
     },
 
     modifyCards(): void{
       localStorage.setItem("cards",JSON.stringify(this.cards));
     },
     changeTitle(idTodo : number,title :string): void{
-      let card : Card = this.getCardById(idTodo);
-      card.title = title;
+      let card : Card|undefined = this.getCardById(idTodo);
+      if (card !== undefined){
+        card.title = title;
 
-      this.changeCard(idTodo)
+        this.changeCard(idTodo)
+      }
+      
     }
     ,
     changeDescription(idTodo: number,description: string): void{
-      let card : Card = this.getCardById(idTodo);
-      card.description = description;
+      let card : Card|undefined = this.getCardById(idTodo);
+      if (card !== undefined){
+        card.description = description;
 
-      this.changeCard(idTodo)
+        this.changeCard(idTodo)
+      }
     },
 
     changeCard(idTodo: number): void{
-      let card : Card = this.getCardById(idTodo);
-      card.date = new Date().toString();
+      let card : Card|undefined = this.getCardById(idTodo);
+      if (card !== undefined){
+        card.date = new Date().toString();
 
-      this.modifyCards();
-
+        this.modifyCards();
+      }
     },
 
-    getCardById(idTodo : number): Card {
-      let card : Card = this.cards.find((elem:Card) => elem.id === idTodo );
+    getCardById(idTodo : number): Card|undefined {
+      let card  : Card|undefined = this.cards.find((elem:Card) => elem.id === idTodo );
       return card;
     }
   }
-}
+})
 </script>
