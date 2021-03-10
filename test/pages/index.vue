@@ -57,15 +57,13 @@ interface cardData{
   cards : Array<Card>
 }
 
-var data:cardData;
-
 export default Vue.extend({
   components:{
   },
-  data() {
+  data: () => {
     var storage = window.localStorage;
     let toParse : string | null = storage.getItem("cards");
-    let treated : string= (toParse === null)?"":toParse;
+    let treated : string= (toParse === null)?"[]":toParse;
     var cards : Array<Card> | null = JSON.parse(treated);
     if (cards === null) 
       cards = [];
